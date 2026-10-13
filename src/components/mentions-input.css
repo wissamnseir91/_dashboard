@@ -1,0 +1,87 @@
+.mentions {
+  font-size: 0.875rem;
+}
+
+.mentions__control {
+  min-height: 4.5rem;
+}
+
+.mentions__input {
+  min-height: 4.5rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--foreground);
+  outline: none;
+}
+
+.mentions__input:focus {
+  border-color: var(--ring);
+}
+
+.mentions__highlighter {
+  padding: 0.5rem 0.625rem;
+  border: 1px solid transparent;
+  /* The highlighter sits behind the real textarea and exists only to paint
+     the mention background — its own plain text must stay invisible or it
+     doubles up with the textarea's text, showing as a misaligned "shadow".
+     react-mentions sets this by default via its `style` prop, but that
+     default is skipped once a `className` is supplied instead. */
+  color: transparent;
+}
+
+.mentions__suggestions {
+  /* Matches the app's Popover/Dialog z-index — needed because, unlike
+     those, this dropdown isn't portaled by default and would otherwise be
+     covered by later content on the page. */
+  z-index: 50;
+}
+
+.mentions__suggestions__list {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+  max-height: 10.5rem;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  font-size: 0.8125rem;
+  /* The list mounts the instant a "@" is typed — animating it in avoids the
+     suggestions box just popping into existence under the caret. */
+  animation: mentions-suggestions-in 0.1s ease-out;
+}
+
+@keyframes mentions-suggestions-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px) scale(0.98);
+  }
+}
+
+.mentions__suggestions__item {
+  padding: 0.375rem 0.625rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease-out;
+}
+
+.mentions__suggestions__item--focused {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.mentions__mention {
+  /* This sits in the highlighter layer, directly behind the real (opaque)
+     textarea text — it must only paint a background highlight, never its
+     own text color, or that color peeks out from behind the real glyphs
+     as a misaligned "shadow" double-image. It also must never add width
+     (padding/margin/border) here: the highlighter and the real textarea
+     have to render every character at identical x-positions for the
+     overlay to line up, and horizontal padding on this span pushes
+     everything after it in the highlighter rightward while the textarea's
+     plain "@Name" text doesn't move — invisible after one mention, but it
+     compounds with each further mention on the same line. */
+  background-color: color-mix(in oklch, var(--primary) 20%, transparent);
+  border-radius: var(--radius-sm);
+}
